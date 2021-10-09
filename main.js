@@ -11,10 +11,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const det = document.getElementById("det");
 
   frequency.addEventListener("change", (e) => {
+    if (osc != null) {
+      osc.frequency.value = e.target.value;
+    }
     freq.innerHTML = `${e.target.value} Hz`;
   });
 
   detune.addEventListener("change", (e) => {
+    if (osc != null) {
+      osc.detune.value = e.target.value;
+    }
     det.innerHTML = e.target.value;
   });
 
