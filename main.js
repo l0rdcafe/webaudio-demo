@@ -80,7 +80,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const filterType = document.querySelector(
       'input[name="filter-type"]:checked'
     ).value;
-    console.log({ filterType });
     filter.type = filterType;
     filter.frequency.value = filterFrequency.value;
     osc.connect(gainOsc);
