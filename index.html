@@ -10,12 +10,37 @@
     <h1>Web Audio Oscillators</h1>
     <input type="radio" id="sawtooth" name="wave" value="sawtooth" />
     <label for="sawtooth">Sawtooth</label>
-    <input type="radio" id="sine" name="wave" value="sine" />
+    <input type="radio" id="sine" name="wave" value="sine" checked />
     <label for="sine">Sine</label>
     <input type="radio" id="square" name="wave" value="square" />
     <label for="square">Square</label>
     <input type="radio" id="triangle" name="wave" value="triangle" />
     <label for="triangle">Triangle</label>
+    <br />
+    <input
+      id="frequency"
+      type="range"
+      min="60"
+      max="5000"
+      name="frequency"
+      value="500"
+      style="width: 75%"
+    />
+    <label for="frequency">Frequency</label>
+    <small id="freq">500 Hz</small>
+    <br />
+    <input
+      id="detune"
+      type="range"
+      min="0"
+      max="100"
+      name="detune"
+      value="0"
+      style="width: 75%"
+    />
+    <label for="detune">Detune</label>
+    <label for="frequency">Frequency</label>
+    <small id="det">0</small>
     <br />
     <button id="play">Play</button>
     <button id="stop">Stop</button>
