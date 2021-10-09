@@ -12,6 +12,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const freq = document.getElementById("freq");
   const det = document.getElementById("det");
   const vol = document.getElementById("vol");
+  const waveShapes = document.querySelectorAll('input[name="wave"]');
+  waveShapes.forEach((shape) => {
+    shape.addEventListener("change", (e) => {
+      if (osc != null) {
+        osc.type = e.target.value;
+      }
+    });
+  });
 
   gain.addEventListener("change", (e) => {
     if (gainOsc != null) {
