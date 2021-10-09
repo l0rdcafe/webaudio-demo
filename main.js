@@ -9,11 +9,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const stop = document.getElementById("stop");
   const waveFrequency = document.getElementById("wave-frequency");
   const filterFrequency = document.getElementById("filter-frequency");
+  const filterBandwidth = document.getElementById("filter-bandwidth");
   const detune = document.getElementById("detune");
   const gain = document.getElementById("gain");
 
   const waveFreq = document.getElementById("wave-freq");
   const filterFreq = document.getElementById("filter-freq");
+  const filterBand = document.getElementById("filter-band");
   const det = document.getElementById("det");
   const vol = document.getElementById("vol");
 
@@ -33,6 +35,14 @@ document.addEventListener("DOMContentLoaded", () => {
         filter.type = e.target.value;
       }
     });
+  });
+
+  filterBandwidth.addEventListener("change", (e) => {
+    if (filter != null) {
+      filter.Q.value = e.target.value / 100;
+    }
+
+    filterBand.innerHTML = e.target.value / 100;
   });
 
   filterFrequency.addEventListener("change", (e) => {
@@ -82,6 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ).value;
     filter.type = filterType;
     filter.frequency.value = filterFrequency.value;
+    filter.Q.value = filterBandwidth.value / 100;
     osc.connect(gainOsc);
     gainOsc.gain.value = gain.value;
     gainOsc.connect(filter);
