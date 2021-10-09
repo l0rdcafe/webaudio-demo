@@ -20,11 +20,11 @@
     <input
       id="frequency"
       type="range"
-      min="60"
-      max="5000"
+      min="100"
+      max="1500"
       name="frequency"
       value="500"
-      style="width: 75%"
+      style="width: 50%"
     />
     <label for="frequency">Frequency</label>
     <small id="freq">500 Hz</small>
@@ -36,11 +36,22 @@
       max="100"
       name="detune"
       value="0"
-      style="width: 75%"
+      style="width: 50%"
     />
     <label for="detune">Detune</label>
-    <label for="frequency">Frequency</label>
     <small id="det">0</small>
+    <br />
+    <input
+      id="gain"
+      type="range"
+      min="10"
+      max="1000"
+      name="gain"
+      value="50"
+      style="width: 50%"
+    />
+    <label for="gain">Gain</label>
+    <small id="vol">0.2</small>
     <br />
     <button id="play">Play</button>
     <button id="stop">Stop</button>
