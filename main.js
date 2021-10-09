@@ -2,13 +2,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const audioCtx = new AudioContext();
 
   let osc;
-  let gainOsc;
-  let filterNode;
-  let delayNode;
-  let delayDryNode;
-  let delayWetNode;
-  let delayMixNode;
-  let compressor;
+  const gainOsc = audioCtx.createGain();
+  const filterNode = audioCtx.createBiquadFilter();
+  const delayNode = audioCtx.createDelay(2);
+  const delayDryNode = audioCtx.createGain();
+  const delayWetNode = audioCtx.createGain();
+  const delayMixNode = audioCtx.createGain();
+  const compressor = audioCtx.createDynamicsCompressor();
 
   // playback controls
   const play = document.getElementById("play");
@@ -46,30 +46,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (osc != null) {
       osc.stop();
     }
-
-    if (filterNode != null) {
-      delete filter;
-    }
-
-    if (gainOsc != null) {
-      delete gainOsc;
-    }
-
-    if (delayNode != null) {
-      delete delay;
-    }
-
-    if (delayDryNode != null) {
-      delete delayDryNode;
-    }
-
-    if (delayWetNode != null) {
-      delete delayWetNode;
-    }
-
-    if (delayMixNode != null) {
-      delete delayMixNode;
-    }
   }
 
   const waveShapes = document.querySelectorAll('input[name="wave"]');
@@ -84,92 +60,58 @@ document.addEventListener("DOMContentLoaded", () => {
   const filterTypes = document.querySelectorAll('input[name="filter-type"]');
   filterTypes.forEach((filterType) => {
     filterType.addEventListener("change", (e) => {
-      if (filterNode != null) {
-        filterNode.type = e.target.value;
-      }
+      filterNode.type = e.target.value;
     });
   });
 
   delayWet.addEventListener("change", (e) => {
-    if (delayDryNode != null) {
-      delayDryNode.gain.value = (100 - e.target.value) / 100;
-    }
-
-    if (delayWetNode != null) {
-      delayWetNode.gain.value = e.target.value / 100;
-    }
-
+    delayDryNode.gain.value = (100 - e.target.value) / 100;
+    delayWetNode.gain.value = e.target.value / 100;
     delayWetness.innerHTML = `${e.target.value}%`;
   });
 
   delayTime.addEventListener("change", (e) => {
-    if (delayNode != null) {
-      delayNode.delayTime.value = e.target.value / 1000;
-    }
-
+    delayNode.delayTime.value = e.target.value / 1000;
     delayMS.innerHTML = `${e.target.value} ms`;
   });
 
   compressorThreshold.addEventListener("change", (e) => {
-    if (compressor != null) {
-      compressor.threshold.value = e.target.value;
-    }
-
+    compressor.threshold.value = e.target.value;
     compThreshold.innerHTML = `${e.target.value} db`;
   });
 
   compressorRatio.addEventListener("change", (e) => {
-    if (compressor != null) {
-      compressor.ratio.value = e.target.value;
-    }
-
+    compressor.ratio.value = e.target.value;
     compRatio.innerHTML = e.target.value;
   });
 
   compressorKnee.addEventListener("change", (e) => {
-    if (compressor != null) {
-      compressor.knee.value = e.target.value;
-    }
-
+    compressor.knee.value = e.target.value;
     compKnee.innerHTML = e.target.value;
   });
 
   compressorAttack.addEventListener("change", (e) => {
-    if (compressor != null) {
-      compressor.attack.value = e.target.value / 1000;
-    }
-
+    compressor.attack.value = e.target.value / 1000;
     compAttack.innerHTML = `${e.target.value} ms`;
   });
 
   compressorRelease.addEventListener("change", (e) => {
-    if (compressor != null) {
-      compressor.release.value = e.target.value / 1000;
-    }
-
+    compressor.release.value = e.target.value / 1000;
     compRelease.innerHTML = `${e.target.value} ms`;
   });
 
   filterBandwidth.addEventListener("change", (e) => {
-    if (filterNode != null) {
-      filterNode.Q.value = e.target.value / 100;
-    }
-
+    filterNode.Q.value = e.target.value / 100;
     filterBand.innerHTML = e.target.value / 100;
   });
 
   filterFrequency.addEventListener("change", (e) => {
-    if (filterNode != null) {
-      filterNode.frequency.value = e.target.value;
-    }
-
+    filterNode.frequency.value = e.target.value;
     filterFreq.innerHTML = `${e.target.value} Hz`;
   });
 
   gain.addEventListener("change", (e) => {
-    if (gainOsc != null) {
-      gainOsc.gain.value = e.target.value / 100;
-    }
+    gainOsc.gain.value = e.target.value / 100;
     vol.innerHTML = `${e.target.value / 100} db`;
   });
 
@@ -193,21 +135,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // init audio nodes
     osc = audioCtx.createOscillator();
-    // main input gain
-    gainOsc = audioCtx.createGain();
-    // eq filter node
-    filterNode = audioCtx.createBiquadFilter();
-
-    // delay node
-    delayNode = audioCtx.createDelay(2);
-    // delay signal nodes
-    delayDryNode = audioCtx.createGain();
-    delayWetNode = audioCtx.createGain();
-    delayMixNode = audioCtx.createGain();
+    // delay time config
     delayNode.delayTime.value = delayTime.value / 1000;
 
     // compressor node
-    compressor = audioCtx.createDynamicsCompressor();
     compressor.threshold.value = compressorThreshold.value;
     compressor.ratio.value = compressorRatio.value;
     compressor.knee.value = compressorKnee.value;
