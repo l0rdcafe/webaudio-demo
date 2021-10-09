@@ -8,17 +8,27 @@ document.addEventListener("DOMContentLoaded", () => {
   let delayDryNode;
   let delayWetNode;
   let delayMixNode;
+  let compressor;
 
+  // playback controls
   const play = document.getElementById("play");
   const stop = document.getElementById("stop");
+
+  // input fields
   const waveFrequency = document.getElementById("wave-frequency");
+  const delayTime = document.getElementById("delay-time");
   const filterFrequency = document.getElementById("filter-frequency");
   const filterBandwidth = document.getElementById("filter-bandwidth");
-  const delayTime = document.getElementById("delay-time");
   const detune = document.getElementById("detune");
   const gain = document.getElementById("gain");
   const delayWet = document.getElementById("delay-wet");
+  const compressorThreshold = document.getElementById("compressor-threshold");
+  const compressorRatio = document.getElementById("compressor-ratio");
+  const compressorKnee = document.getElementById("compressor-knee");
+  const compressorAttack = document.getElementById("compressor-attack");
+  const compressorRelease = document.getElementById("compressor-release");
 
+  // DOM node to display values
   const waveFreq = document.getElementById("wave-freq");
   const filterFreq = document.getElementById("filter-freq");
   const filterBand = document.getElementById("filter-band");
@@ -26,8 +36,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const vol = document.getElementById("vol");
   const delayMS = document.getElementById("delay-ms");
   const delayWetness = document.getElementById("delay-wetness");
-
-  const waveShapes = document.querySelectorAll('input[name="wave"]');
+  const compThreshold = document.getElementById("comp-threshold");
+  const compRatio = document.getElementById("comp-ratio");
+  const compKnee = document.getElementById("comp-knee");
+  const compAttack = document.getElementById("comp-attack");
+  const compRelease = document.getElementById("comp-release");
 
   function stopOscillator() {
     if (osc != null) {
@@ -59,6 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  const waveShapes = document.querySelectorAll('input[name="wave"]');
   waveShapes.forEach((shape) => {
     shape.addEventListener("change", (e) => {
       if (osc != null) {
@@ -93,8 +107,47 @@ document.addEventListener("DOMContentLoaded", () => {
       delayNode.delayTime.value = e.target.value / 1000;
     }
 
-    delayMS.innerHTML =
-      e.target.value === 1 ? "1 millisecond" : `${e.target.value} milliseconds`;
+    delayMS.innerHTML = `${e.target.value} ms`;
+  });
+
+  compressorThreshold.addEventListener("change", (e) => {
+    if (compressor != null) {
+      compressor.threshold.value = e.target.value;
+    }
+
+    compThreshold.innerHTML = `${e.target.value} db`;
+  });
+
+  compressorRatio.addEventListener("change", (e) => {
+    if (compressor != null) {
+      compressor.ratio.value = e.target.value;
+    }
+
+    compRatio.innerHTML = e.target.value;
+  });
+
+  compressorKnee.addEventListener("change", (e) => {
+    if (compressor != null) {
+      compressor.knee.value = e.target.value;
+    }
+
+    compKnee.innerHTML = e.target.value;
+  });
+
+  compressorAttack.addEventListener("change", (e) => {
+    if (compressor != null) {
+      compressor.attack.value = e.target.value / 1000;
+    }
+
+    compAttack.innerHTML = `${e.target.value} ms`;
+  });
+
+  compressorRelease.addEventListener("change", (e) => {
+    if (compressor != null) {
+      compressor.release.value = e.target.value / 1000;
+    }
+
+    compRelease.innerHTML = `${e.target.value} ms`;
   });
 
   filterBandwidth.addEventListener("change", (e) => {
@@ -117,7 +170,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (gainOsc != null) {
       gainOsc.gain.value = e.target.value / 100;
     }
-    vol.innerHTML = e.target.value / 100;
+    vol.innerHTML = `${e.target.value / 100} db`;
   });
 
   waveFrequency.addEventListener("change", (e) => {
@@ -131,7 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (osc != null) {
       osc.detune.value = e.target.value;
     }
-    det.innerHTML = e.target.value;
+    det.innerHTML = `${e.target.value} ct`;
   });
 
   play.addEventListener("click", () => {
@@ -140,13 +193,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // init audio nodes
     osc = audioCtx.createOscillator();
+    // main input gain
     gainOsc = audioCtx.createGain();
+    // eq filter node
     filterNode = audioCtx.createBiquadFilter();
+
+    // delay node
     delayNode = audioCtx.createDelay(2);
+    // delay signal nodes
     delayDryNode = audioCtx.createGain();
     delayWetNode = audioCtx.createGain();
     delayMixNode = audioCtx.createGain();
     delayNode.delayTime.value = delayTime.value / 1000;
+
+    // compressor node
+    compressor = audioCtx.createDynamicsCompressor();
+    compressor.threshold.value = compressorThreshold.value;
+    compressor.ratio.value = compressorRatio.value;
+    compressor.knee.value = compressorKnee.value;
+    compressor.attack.value = compressorAttack.value;
+    compressor.release.value = compressorRelease.value;
 
     // set osc wave, freq and pitch
     const waveType = document.querySelector('input[name="wave"]:checked').value;
@@ -186,8 +252,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // wet delay signal into delay mix
     delayWetNode.connect(delayMixNode);
 
-    // delay mix to output
-    delayMixNode.connect(audioCtx.destination);
+    // delay mix to compressor
+    delayMixNode.connect(compressor);
+    // compressor to output
+    compressor.connect(audioCtx.destination);
     osc.start(audioCtx.currentTime);
   });
 

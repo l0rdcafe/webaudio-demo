@@ -89,7 +89,7 @@
       style="width: 50%"
     />
     <label for="detune">Detune</label>
-    <small id="det">0</small>
+    <small id="det">0 ct</small>
     <br />
     <h3>Dynamic</h3>
     <input
@@ -102,7 +102,7 @@
       style="width: 50%"
     />
     <label for="gain">Gain</label>
-    <small id="vol">0.2</small>
+    <small id="vol">0.2 db</small>
     <br />
     <h3>Delay</h3>
     <input
@@ -115,7 +115,7 @@
       style="width: 50%"
     />
     <label for="delay-time">Delay Time</label>
-    <small id="delay-ms">50 milliseconds</small>
+    <small id="delay-ms">50 ms</small>
     <br />
     <input
       id="delay-wet"
@@ -128,6 +128,67 @@
     />
     <label for="delay-wet">Delay Wet</label>
     <small id="delay-wetness">0%</small>
+    <br />
+    <h3>Compressor</h3>
+    <input
+      id="compressor-threshold"
+      type="range"
+      min="-60"
+      max="100"
+      name="compressor-threshold"
+      value="-30"
+      style="width: 50%"
+    />
+    <label for="compressor-threshold">Threshold</label>
+    <small id="comp-threshold">-60 db</small>
+    <br />
+    <input
+      id="compressor-ratio"
+      type="range"
+      min="1"
+      max="20"
+      name="compressor-ratio"
+      value="1"
+      style="width: 50%"
+    />
+    <label for="compressor-ratio">Ratio</label>
+    <small id="comp-ratio">1</small>
+    <br />
+    <input
+      id="compressor-knee"
+      type="range"
+      min="0"
+      max="40"
+      name="compressor-knee"
+      value="30"
+      style="width: 50%"
+    />
+    <label for="compressor-knee">Knee</label>
+    <small id="comp-knee">30</small>
+    <br />
+    <input
+      id="compressor-attack"
+      type="range"
+      min="0"
+      max="1000"
+      name="compressor-attack"
+      value="3"
+      style="width: 50%"
+    />
+    <label for="compressor-attack">Attack</label>
+    <small id="comp-attack">3 ms</small>
+    <br />
+    <input
+      id="compressor-release"
+      type="range"
+      min="0"
+      max="1000"
+      name="compressor-release"
+      value="250"
+      style="width: 50%"
+    />
+    <label for="compressor-release">Release</label>
+    <small id="comp-release">250 ms</small>
     <br />
     <h3>Controls</h3>
     <button id="play">Play</button>
