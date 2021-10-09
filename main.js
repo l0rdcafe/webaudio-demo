@@ -31,7 +31,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     osc = audioCtx.createOscillator();
     const waveType = document.querySelector('input[name="wave"]:checked').value;
-    console.log({ frequency: frequency.value, detune: detune.value, waveType });
     osc.type = waveType;
     osc.frequency.value = frequency.value;
     osc.detune.value = detune.value;
