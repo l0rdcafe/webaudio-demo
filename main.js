@@ -113,7 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
     osc = audioCtx.createOscillator();
     gainOsc = audioCtx.createGain();
     filter = audioCtx.createBiquadFilter();
-    delay = audioCtx.createDelay();
+    delay = audioCtx.createDelay(2);
     delay.delayTime.value = delayTime.value / 1000;
 
     // set osc wave, freq and pitch
