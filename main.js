@@ -174,14 +174,19 @@ document.addEventListener("DOMContentLoaded", () => {
     gainOsc.connect(filterNode);
     // filter into delay
     filterNode.connect(delayNode);
-    // delay to output
+    // delay to wet channel
     delayNode.connect(delayWetNode);
+    // wet channel back to delay
     delayWetNode.connect(delayNode);
 
+    // OG filter signal into dry delay channel
     filterNode.connect(delayDryNode);
+    // dry delay signal into delay mix
     delayDryNode.connect(delayMixNode);
+    // wet delay signal into delay mix
     delayWetNode.connect(delayMixNode);
 
+    // delay mix to output
     delayMixNode.connect(audioCtx.destination);
     osc.start(audioCtx.currentTime);
   });
