@@ -4,13 +4,14 @@ document.addEventListener("DOMContentLoaded", () => {
   let osc;
   let gainOsc;
   let filter;
-  let convolver;
+  let delay;
 
   const play = document.getElementById("play");
   const stop = document.getElementById("stop");
   const waveFrequency = document.getElementById("wave-frequency");
   const filterFrequency = document.getElementById("filter-frequency");
   const filterBandwidth = document.getElementById("filter-bandwidth");
+  const delayTime = document.getElementById("delay-time");
   const detune = document.getElementById("detune");
   const gain = document.getElementById("gain");
 
@@ -19,6 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const filterBand = document.getElementById("filter-band");
   const det = document.getElementById("det");
   const vol = document.getElementById("vol");
+  const delayMS = document.getElementById("delay-ms");
 
   const waveShapes = document.querySelectorAll('input[name="wave"]');
 
@@ -35,8 +37,8 @@ document.addEventListener("DOMContentLoaded", () => {
       delete gainOsc;
     }
 
-    if (convolver != null) {
-      delete convolver;
+    if (delay != null) {
+      delete delay;
     }
   }
 
@@ -55,6 +57,15 @@ document.addEventListener("DOMContentLoaded", () => {
         filter.type = e.target.value;
       }
     });
+  });
+
+  delayTime.addEventListener("change", (e) => {
+    if (delay != null) {
+      delay.delayTime.value = e.target.value / 1000;
+    }
+
+    delayMS.innerHTML =
+      e.target.value === 1 ? "1 millisecond" : `${e.target.value} milliseconds`;
   });
 
   filterBandwidth.addEventListener("change", (e) => {
@@ -102,7 +113,8 @@ document.addEventListener("DOMContentLoaded", () => {
     osc = audioCtx.createOscillator();
     gainOsc = audioCtx.createGain();
     filter = audioCtx.createBiquadFilter();
-    convolver = audioCtx.createConvolver();
+    delay = audioCtx.createDelay();
+    delay.delayTime.value = delayTime.value / 1000;
 
     // set osc wave, freq and pitch
     const waveType = document.querySelector('input[name="wave"]:checked').value;
@@ -124,10 +136,10 @@ document.addEventListener("DOMContentLoaded", () => {
     gainOsc.gain.value = gain.value;
     // gain into filter node
     gainOsc.connect(filter);
-    // filter into convolver
-    // filter.connect(convolver);
-    // convolver to output
-    filter.connect(audioCtx.destination);
+    // filter into delay
+    filter.connect(delay);
+    // delay to output
+    delay.connect(audioCtx.destination);
     osc.start(audioCtx.currentTime);
   });
 
