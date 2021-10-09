@@ -126,7 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
     gainOsc.connect(filter);
     // filter into convolver
     filter.connect(convolver);
-    // filter to output
+    // convolver to output
     convolver.connect(audioCtx.destination);
     osc.start(audioCtx.currentTime);
   });
