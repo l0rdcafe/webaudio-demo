@@ -125,13 +125,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // gain into filter node
     gainOsc.connect(filter);
     // filter into convolver
-    filter.connect(convolver);
+    // filter.connect(convolver);
     // convolver to output
-    convolver.connect(audioCtx.destination);
+    filter.connect(audioCtx.destination);
     osc.start(audioCtx.currentTime);
   });
 
-  stop.addEventListener("click", () => {
-    stopOscillator();
-  });
+  stop.addEventListener("click", stopOscillator);
 });
