@@ -3,8 +3,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let osc;
   let gainOsc;
-  let filter;
-  let delay;
+  let filterNode;
+  let delayNode;
+  let delayDryNode;
+  let delayWetNode;
+  let delayMixNode;
 
   const play = document.getElementById("play");
   const stop = document.getElementById("stop");
@@ -14,6 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const delayTime = document.getElementById("delay-time");
   const detune = document.getElementById("detune");
   const gain = document.getElementById("gain");
+  const delayWet = document.getElementById("delay-wet");
 
   const waveFreq = document.getElementById("wave-freq");
   const filterFreq = document.getElementById("filter-freq");
@@ -21,6 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const det = document.getElementById("det");
   const vol = document.getElementById("vol");
   const delayMS = document.getElementById("delay-ms");
+  const delayWetness = document.getElementById("delay-wetness");
 
   const waveShapes = document.querySelectorAll('input[name="wave"]');
 
@@ -29,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
       osc.stop();
     }
 
-    if (filter != null) {
+    if (filterNode != null) {
       delete filter;
     }
 
@@ -37,8 +42,20 @@ document.addEventListener("DOMContentLoaded", () => {
       delete gainOsc;
     }
 
-    if (delay != null) {
+    if (delayNode != null) {
       delete delay;
+    }
+
+    if (delayDryNode != null) {
+      delete delayDryNode;
+    }
+
+    if (delayWetNode != null) {
+      delete delayWetNode;
+    }
+
+    if (delayMixNode != null) {
+      delete delayMixNode;
     }
   }
 
@@ -53,15 +70,27 @@ document.addEventListener("DOMContentLoaded", () => {
   const filterTypes = document.querySelectorAll('input[name="filter-type"]');
   filterTypes.forEach((filterType) => {
     filterType.addEventListener("change", (e) => {
-      if (filter != null) {
-        filter.type = e.target.value;
+      if (filterNode != null) {
+        filterNode.type = e.target.value;
       }
     });
   });
 
+  delayWet.addEventListener("change", (e) => {
+    if (delayDryNode != null) {
+      delayDryNode.gain.value = (100 - e.target.value) / 100;
+    }
+
+    if (delayWetNode != null) {
+      delayWetNode.gain.value = e.target.value / 100;
+    }
+
+    delayWetness.innerHTML = `${e.target.value}%`;
+  });
+
   delayTime.addEventListener("change", (e) => {
-    if (delay != null) {
-      delay.delayTime.value = e.target.value / 1000;
+    if (delayNode != null) {
+      delayNode.delayTime.value = e.target.value / 1000;
     }
 
     delayMS.innerHTML =
@@ -69,16 +98,16 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   filterBandwidth.addEventListener("change", (e) => {
-    if (filter != null) {
-      filter.Q.value = e.target.value / 100;
+    if (filterNode != null) {
+      filterNode.Q.value = e.target.value / 100;
     }
 
     filterBand.innerHTML = e.target.value / 100;
   });
 
   filterFrequency.addEventListener("change", (e) => {
-    if (filter != null) {
-      filter.frequency.value = e.target.value;
+    if (filterNode != null) {
+      filterNode.frequency.value = e.target.value;
     }
 
     filterFreq.innerHTML = `${e.target.value} Hz`;
@@ -112,9 +141,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // init audio nodes
     osc = audioCtx.createOscillator();
     gainOsc = audioCtx.createGain();
-    filter = audioCtx.createBiquadFilter();
-    delay = audioCtx.createDelay(2);
-    delay.delayTime.value = delayTime.value / 1000;
+    filterNode = audioCtx.createBiquadFilter();
+    delayNode = audioCtx.createDelay(2);
+    delayDryNode = audioCtx.createGain();
+    delayWetNode = audioCtx.createGain();
+    delayMixNode = audioCtx.createGain();
+    delayNode.delayTime.value = delayTime.value / 1000;
 
     // set osc wave, freq and pitch
     const waveType = document.querySelector('input[name="wave"]:checked').value;
@@ -126,20 +158,31 @@ document.addEventListener("DOMContentLoaded", () => {
     const filterType = document.querySelector(
       'input[name="filter-type"]:checked'
     ).value;
-    filter.type = filterType;
-    filter.frequency.value = filterFrequency.value;
-    filter.Q.value = filterBandwidth.value / 100;
+    filterNode.type = filterType;
+    filterNode.frequency.value = filterFrequency.value;
+    filterNode.Q.value = filterBandwidth.value / 100;
+
+    // set delay channels
+    delayDryNode.gain.value = (100 - delayWet.value) / 100;
+    delayWetNode.gain.value = delayWet.value / 100;
 
     // osc into gain node
     osc.connect(gainOsc);
     // set gain value
     gainOsc.gain.value = gain.value;
     // gain into filter node
-    gainOsc.connect(filter);
+    gainOsc.connect(filterNode);
     // filter into delay
-    filter.connect(delay);
+    filterNode.connect(delayNode);
     // delay to output
-    delay.connect(audioCtx.destination);
+    delayNode.connect(delayWetNode);
+    delayWetNode.connect(delayNode);
+
+    filterNode.connect(delayDryNode);
+    delayDryNode.connect(delayMixNode);
+    delayWetNode.connect(delayMixNode);
+
+    delayMixNode.connect(audioCtx.destination);
     osc.start(audioCtx.currentTime);
   });
 
