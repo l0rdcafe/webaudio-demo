@@ -8,6 +8,7 @@
   <script src="main.js"></script>
   <body>
     <h1>Web Audio Oscillators</h1>
+    <h3>Wave Shape</h3>
     <input type="radio" id="sawtooth" name="wave" value="sawtooth" />
     <label for="sawtooth">Sawtooth</label>
     <input type="radio" id="sine" name="wave" value="sine" checked />
@@ -18,17 +19,36 @@
     <label for="triangle">Triangle</label>
     <br />
     <input
-      id="frequency"
+      id="wave-frequency"
       type="range"
       min="100"
       max="1500"
-      name="frequency"
+      name="wave-frequency"
       value="500"
       style="width: 50%"
     />
-    <label for="frequency">Frequency</label>
-    <small id="freq">500 Hz</small>
+    <label for="wave-frequency">Wave Frequency</label>
+    <small id="wave-freq">500 Hz</small>
     <br />
+    <h3>EQ Filters</h3>
+    <input type="radio" id="lowpass" name="filter-type" value="lowpass" />
+    <label for="lowpass">Low Pass</label>
+    <input type="radio" id="highpass" name="filter-type" value="highpass" />
+    <label for="highpass">High Pass</label>
+    <br />
+    <input
+      id="filter-frequency"
+      type="range"
+      min="100"
+      max="1500"
+      name="filter-frequency"
+      value="500"
+      style="width: 50%"
+    />
+    <label for="filter-frequency">Filter Frequency</label>
+    <small id="filter-freq">500 Hz</small>
+    <br />
+    <h3>Pitch</h3>
     <input
       id="detune"
       type="range"
@@ -41,6 +61,7 @@
     <label for="detune">Detune</label>
     <small id="det">0</small>
     <br />
+    <h3>Dynamic</h3>
     <input
       id="gain"
       type="range"
@@ -53,6 +74,7 @@
     <label for="gain">Gain</label>
     <small id="vol">0.2</small>
     <br />
+    <h3>Controls</h3>
     <button id="play">Play</button>
     <button id="stop">Stop</button>
   </body>
