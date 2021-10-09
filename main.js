@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let osc;
   let gainOsc;
   let filter;
+  let convolver;
 
   const play = document.getElementById("play");
   const stop = document.getElementById("stop");
@@ -20,6 +21,25 @@ document.addEventListener("DOMContentLoaded", () => {
   const vol = document.getElementById("vol");
 
   const waveShapes = document.querySelectorAll('input[name="wave"]');
+
+  function stopOscillator() {
+    if (osc != null) {
+      osc.stop();
+    }
+
+    if (filter != null) {
+      delete filter;
+    }
+
+    if (gainOsc != null) {
+      delete gainOsc;
+    }
+
+    if (convolver != null) {
+      delete convolver;
+    }
+  }
+
   waveShapes.forEach((shape) => {
     shape.addEventListener("change", (e) => {
       if (osc != null) {
@@ -75,42 +95,43 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   play.addEventListener("click", () => {
-    if (osc != null) {
-      osc.stop();
-    }
+    // stop if already playing
+    stopOscillator();
 
+    // init audio nodes
     osc = audioCtx.createOscillator();
     gainOsc = audioCtx.createGain();
     filter = audioCtx.createBiquadFilter();
+    convolver = audioCtx.createConvolver();
+
+    // set osc wave, freq and pitch
     const waveType = document.querySelector('input[name="wave"]:checked').value;
     osc.type = waveType;
     osc.frequency.value = waveFrequency.value;
     osc.detune.value = detune.value;
 
+    // set filter type, freq and band
     const filterType = document.querySelector(
       'input[name="filter-type"]:checked'
     ).value;
     filter.type = filterType;
     filter.frequency.value = filterFrequency.value;
     filter.Q.value = filterBandwidth.value / 100;
+
+    // osc into gain node
     osc.connect(gainOsc);
+    // set gain value
     gainOsc.gain.value = gain.value;
+    // gain into filter node
     gainOsc.connect(filter);
-    filter.connect(audioCtx.destination);
+    // filter into convolver
+    filter.connect(convolver);
+    // filter to output
+    convolver.connect(audioCtx.destination);
     osc.start(audioCtx.currentTime);
   });
 
   stop.addEventListener("click", () => {
-    if (osc != null) {
-      osc.stop();
-    }
-
-    if (filter != null) {
-      delete filter;
-    }
-
-    if (gainOsc != null) {
-      delete gainOsc;
-    }
+    stopOscillator();
   });
 });
