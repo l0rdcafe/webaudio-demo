@@ -70,22 +70,6 @@ document.addEventListener("DOMContentLoaded", () => {
     compReduction.innerHTML = "0 db";
   }
 
-  function getPanValues(dir) {
-    if (dir === 0) {
-      return { x: 0, y: 0 };
-    }
-
-    if (dir < 0) {
-      const x = dir / 5;
-      const y = dir / 5;
-      return { x, y };
-    }
-
-    const x = dir / 5;
-    const y = dir / 5;
-    return { x, y };
-  }
-
   const waveShapes = document.querySelectorAll('input[name="wave"]');
   waveShapes.forEach((shape) => {
     shape.addEventListener("change", (e) => {
@@ -111,9 +95,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   pan.addEventListener("change", (e) => {
     if (panner != null) {
-      const { x, y } = getPanValues(e.target.value);
-      panner.positionX.value = x;
-      panner.positionY.value = y;
+      panner.positionX.value =
+        e.target.value === 0 ? e.target.value : e.target.value / 50;
     }
     panVal.innerHTML =
       e.target.value === 0
@@ -222,9 +205,7 @@ document.addEventListener("DOMContentLoaded", () => {
     delayDryNode.gain.value = (100 - delayWet.value) / 100;
     delayWetNode.gain.value = delayWet.value / 100;
 
-    const { x, y } = getPanValues(pan.value);
-    panner.positionX.value = x;
-    panner.positionY.value = y;
+    panner.positionX.value = pan.value / 50;
     panner.positionZ.value = depth.value / 10;
 
     // osc into gain node
