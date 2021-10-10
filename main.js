@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const delayWetNode = audioCtx.createGain();
   const delayMixNode = audioCtx.createGain();
   const compressor = audioCtx.createDynamicsCompressor();
+  const panner = audioCtx.createPanner();
 
   // playback controls
   const play = document.getElementById("play");
@@ -28,6 +29,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const compressorKnee = document.getElementById("compressor-knee");
   const compressorAttack = document.getElementById("compressor-attack");
   const compressorRelease = document.getElementById("compressor-release");
+  const pan = document.getElementById("pan");
+  const depth = document.getElementById("depth");
 
   // DOM node to display values
   const waveFreq = document.getElementById("wave-freq");
@@ -43,6 +46,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const compAttack = document.getElementById("comp-attack");
   const compRelease = document.getElementById("comp-release");
   const compReduction = document.getElementById("comp-reduction");
+  const panVal = document.getElementById("pan-val");
+  const depthVal = document.getElementById("depth-val");
 
   function stopOscillator() {
     if (osc != null) {
@@ -65,6 +70,22 @@ document.addEventListener("DOMContentLoaded", () => {
     compReduction.innerHTML = "0 db";
   }
 
+  function getPanValues(dir) {
+    if (dir === 0) {
+      return { x: 0, y: 0 };
+    }
+
+    if (dir < 0) {
+      const x = dir / 5;
+      const y = dir / 5;
+      return { x, y };
+    }
+
+    const x = dir / 5;
+    const y = dir / 5;
+    return { x, y };
+  }
+
   const waveShapes = document.querySelectorAll('input[name="wave"]');
   waveShapes.forEach((shape) => {
     shape.addEventListener("change", (e) => {
@@ -79,6 +100,27 @@ document.addEventListener("DOMContentLoaded", () => {
     filterType.addEventListener("change", (e) => {
       filterNode.type = e.target.value;
     });
+  });
+
+  depth.addEventListener("change", (e) => {
+    if (panner != null) {
+      panner.positionZ.value = e.target.value / 10;
+    }
+    depthVal.innerHTML = e.target.value / 10;
+  });
+
+  pan.addEventListener("change", (e) => {
+    if (panner != null) {
+      const { x, y } = getPanValues(e.target.value);
+      panner.positionX.value = x;
+      panner.positionY.value = y;
+    }
+    panVal.innerHTML =
+      e.target.value === 0
+        ? "0 C"
+        : e.target.value > 0
+        ? `${e.target.value} R`
+        : `${e.target.value * -1} L`;
   });
 
   delayWet.addEventListener("change", (e) => {
@@ -180,6 +222,11 @@ document.addEventListener("DOMContentLoaded", () => {
     delayDryNode.gain.value = (100 - delayWet.value) / 100;
     delayWetNode.gain.value = delayWet.value / 100;
 
+    const { x, y } = getPanValues(pan.value);
+    panner.positionX.value = x;
+    panner.positionY.value = y;
+    panner.positionZ.value = depth.value / 10;
+
     // osc into gain node
     osc.connect(gainOsc);
     // set gain value
@@ -202,8 +249,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // delay mix to compressor
     delayMixNode.connect(compressor);
-    // compressor to output
-    compressor.connect(audioCtx.destination);
+    // compressor to panner
+    compressor.connect(panner);
+    // panner to output
+    panner.connect(audioCtx.destination);
     osc.start(audioCtx.currentTime);
     reductionMeter();
   });
