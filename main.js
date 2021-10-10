@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let osc;
   let compReductionTimeout;
+  // global audio nodes for oscillator
   const gainOsc = audioCtx.createGain();
   const filterNode = audioCtx.createBiquadFilter();
   const delayNode = audioCtx.createDelay(2);
@@ -32,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const pan = document.getElementById("pan");
   const depth = document.getElementById("depth");
 
-  // DOM node to display values
+  // DOM nodes to display values
   const waveFreq = document.getElementById("wave-freq");
   const filterFreq = document.getElementById("filter-freq");
   const filterBand = document.getElementById("filter-band");
@@ -88,9 +89,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   depth.addEventListener("change", (e) => {
     if (panner != null) {
-      panner.positionZ.value = e.target.value / 10;
+      panner.positionZ.value = e.target.value;
     }
-    depthVal.innerHTML = e.target.value / 10;
+    depthVal.innerHTML = e.target.value;
   });
 
   pan.addEventListener("change", (e) => {
