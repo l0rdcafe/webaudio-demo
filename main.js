@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const audioCtx = new AudioContext();
 
   let osc;
+  let compReductionTimeout;
   const gainOsc = audioCtx.createGain();
   const filterNode = audioCtx.createBiquadFilter();
   const delayNode = audioCtx.createDelay(2);
@@ -47,11 +48,21 @@ document.addEventListener("DOMContentLoaded", () => {
     if (osc != null) {
       osc.stop();
     }
+
+    clearReductionMeter();
   }
 
   function reductionMeter() {
     compReduction.innerHTML = `${compressor.reduction.toFixed(2)} db`;
-    requestAnimationFrame(reductionMeter);
+    compReductionTimeout = requestAnimationFrame(reductionMeter);
+  }
+
+  function clearReductionMeter() {
+    if (compReductionTimeout != null) {
+      cancelAnimationFrame(compReductionTimeout);
+    }
+
+    compReduction.innerHTML = "0 db";
   }
 
   const waveShapes = document.querySelectorAll('input[name="wave"]');
