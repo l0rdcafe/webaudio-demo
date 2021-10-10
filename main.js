@@ -41,11 +41,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const compKnee = document.getElementById("comp-knee");
   const compAttack = document.getElementById("comp-attack");
   const compRelease = document.getElementById("comp-release");
+  const compReduction = document.getElementById("comp-reduction");
 
   function stopOscillator() {
     if (osc != null) {
       osc.stop();
     }
+  }
+
+  function reductionMeter() {
+    compReduction.innerHTML = `${compressor.reduction.toFixed(2)} db`;
+    requestAnimationFrame(reductionMeter);
   }
 
   const waveShapes = document.querySelectorAll('input[name="wave"]');
@@ -188,6 +194,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // compressor to output
     compressor.connect(audioCtx.destination);
     osc.start(audioCtx.currentTime);
+    reductionMeter();
   });
 
   stop.addEventListener("click", stopOscillator);
