@@ -125,7 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   compressorRatio.addEventListener("change", (e) => {
     compressor.ratio.value = e.target.value;
-    compRatio.innerHTML = e.target.value;
+    compRatio.innerHTML = `${e.target.value}:1`;
   });
 
   compressorKnee.addEventListener("change", (e) => {
@@ -145,7 +145,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   filterBandwidth.addEventListener("change", (e) => {
     filterNode.Q.value = e.target.value / 100;
-    filterBand.innerHTML = e.target.value / 100;
+    filterBand.innerHTML = `${e.target.value / 100} Q`;
   });
 
   filterFrequency.addEventListener("change", (e) => {
